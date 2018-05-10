@@ -124,7 +124,19 @@ namespace FactionLib
                     ff.TooClose = 2;
                 }
 
-                if(ff.LastUpdate < DateTime.UtcNow.AddHours(-12))
+                int tickCutoff = 14;
+                DateTime dt;
+
+                if (DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc))
+                {
+                    dt = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+                }
+                else
+                {
+                    dt = new DateTime(DateTime.UtcNow.AddDays(-1).Year, DateTime.UtcNow.AddDays(-1).Month, DateTime.UtcNow.AddDays(-1).Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+                }
+
+                if(ff.LastUpdate < dt)
                 {
                     ff.DataIsOld = true;
                 }
