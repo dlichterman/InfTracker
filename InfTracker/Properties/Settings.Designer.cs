@@ -22,5 +22,101 @@ namespace InfTracker.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF98FB98")]
+        public global::System.Windows.Media.Color okBackgroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["okBackgroundColor"]));
+            }
+            set {
+                this["okBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF000000")]
+        public global::System.Windows.Media.Color okForegroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["okForegroundColor"]));
+            }
+            set {
+                this["okForegroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFC0C0C0")]
+        public global::System.Windows.Media.Color oldBackgroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["oldBackgroundColor"]));
+            }
+            set {
+                this["oldBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFFFF")]
+        public global::System.Windows.Media.Color oldForergoundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["oldForergoundColor"]));
+            }
+            set {
+                this["oldForergoundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFA52A2A")]
+        public global::System.Windows.Media.Color reallyBadBackgroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["reallyBadBackgroundColor"]));
+            }
+            set {
+                this["reallyBadBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFFFFF")]
+        public global::System.Windows.Media.Color reallyBadForegroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["reallyBadForegroundColor"]));
+            }
+            set {
+                this["reallyBadForegroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFFFB6C1")]
+        public global::System.Windows.Media.Color badBackgroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["badBackgroundColor"]));
+            }
+            set {
+                this["badBackgroundColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF000000")]
+        public global::System.Windows.Media.Color badForegroundColor {
+            get {
+                return ((global::System.Windows.Media.Color)(this["badForegroundColor"]));
+            }
+            set {
+                this["badForegroundColor"] = value;
+            }
+        }
     }
 }

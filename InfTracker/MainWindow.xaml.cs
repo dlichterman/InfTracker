@@ -1,4 +1,5 @@
 ﻿using FactionLib;
+using InfTracker;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,6 +35,7 @@ namespace WpfApp2
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
             dispatcherTimer.Start();
+            SetColors();
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
@@ -67,6 +69,29 @@ namespace WpfApp2
         private void About_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Version: " + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        }
+
+        private void Options_Click(object sender, RoutedEventArgs e)
+        {
+            //lv.ItemContainerStyle.Triggers.Clear();
+            SettingsWindow w = new SettingsWindow();
+            w.Owner = this;
+            w.ShowDialog();
+            SetColors();
+        }
+
+        private void SetColors()
+        {
+            var set = InfTracker.Properties.Settings.Default;
+
+            this.Resources["okBG"] = new SolidColorBrush(set.okBackgroundColor);
+            this.Resources["okFG"] = new SolidColorBrush(set.okForegroundColor);
+            this.Resources["oldBG"] = new SolidColorBrush(set.oldBackgroundColor);
+            this.Resources["oldFG"] = new SolidColorBrush(set.oldForergoundColor);
+            this.Resources["badBG"] = new SolidColorBrush(set.badBackgroundColor);
+            this.Resources["badFG"] = new SolidColorBrush(set.badForegroundColor);
+            this.Resources["reallyBadBG"] = new SolidColorBrush(set.reallyBadBackgroundColor);
+            this.Resources["reallyBadFG"] = new SolidColorBrush(set.reallyBadForegroundColor);
         }
     }
 

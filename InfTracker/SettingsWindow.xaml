@@ -1,0 +1,32 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InfTracker"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" x:Class="InfTracker.SettingsWindow"
+        mc:Ignorable="d"
+        Title="Settings" Height="250" Width="500"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" WindowStartupLocation="CenterOwner"
+        >
+    <Grid>
+
+        <xctk:ColorPicker x:Name="cpokbg" HorizontalAlignment="Left" Margin="16,49,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=okBG}"/>
+        <xctk:ColorPicker x:Name="cpokfg" HorizontalAlignment="Left" Margin="154,49,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=okFG}"/>
+        <Label x:Name="lblTestOk" Content="System OK" HorizontalAlignment="Left" Margin="307,47,0,0" VerticalAlignment="Top" Width="150" Foreground="{Binding Path=okFGBrush,UpdateSourceTrigger=PropertyChanged}" Background="{Binding Path=okBGBrush,UpdateSourceTrigger=PropertyChanged}"/>
+        <xctk:ColorPicker x:Name="cpoldbg" HorizontalAlignment="Left" Margin="16,80,0,0" VerticalAlignment="Top" Width="123"  SelectedColor="{Binding Path=oldBG}" />
+        <xctk:ColorPicker x:Name="cpoldfg" HorizontalAlignment="Left" Margin="154,80,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=oldFG}"/>
+        <Label x:Name="lblTestOld" Content="System data old" HorizontalAlignment="Left" Margin="307,78,0,0" VerticalAlignment="Top" Width="150" Foreground="{Binding Path=oldFGBrush,UpdateSourceTrigger=PropertyChanged}" Background="{Binding Path=oldBGBrush,UpdateSourceTrigger=PropertyChanged}"/>
+        <xctk:ColorPicker x:Name="cpreallybadbg" HorizontalAlignment="Left" Margin="16,111,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=reallybadBG}"/>
+        <xctk:ColorPicker x:Name="cpreallybadfg" HorizontalAlignment="Left" Margin="155,111,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=reallybadFG}" />
+        <Label x:Name="lblTestReallyBad" Content="System really bad &lt;= 3%" HorizontalAlignment="Left" Margin="307,109,0,0" VerticalAlignment="Top" Width="150" Foreground="{Binding Path=reallybadFGBrush,UpdateSourceTrigger=PropertyChanged}" Background="{Binding Path=reallybadBGBrush,UpdateSourceTrigger=PropertyChanged}"/>
+        <xctk:ColorPicker x:Name="cpbadbg" HorizontalAlignment="Left" Margin="16,142,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=badBG}" />
+        <xctk:ColorPicker x:Name="cpbadfg" HorizontalAlignment="Left" Margin="155,142,0,0" VerticalAlignment="Top" Width="123" SelectedColor="{Binding Path=badFG}" />
+        <Label x:Name="lblTestBad" Content="System bad &lt;= 5%" HorizontalAlignment="Left" Margin="307,140,0,0" VerticalAlignment="Top" Width="150" Foreground="{Binding Path=badFGBrush,UpdateSourceTrigger=PropertyChanged}" Background="{Binding Path=badBGBrush,UpdateSourceTrigger=PropertyChanged}"/>
+        <Button x:Name="btnReset" Content="Reset" HorizontalAlignment="Right" Margin="0,0,90,10" VerticalAlignment="Bottom" Width="75" Click="btnReset_Click"/>
+        <Button x:Name="btnSave" Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Click="btnSave_Click" />
+        <Label Content="You can change the display colors for the grid here" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnResetDefaults" Content="Reset to defaults" HorizontalAlignment="Right" Margin="0,0,170,10" VerticalAlignment="Bottom" Width="107" Click="btnResetDefaults_Click"/>
+
+    </Grid>
+</Window>

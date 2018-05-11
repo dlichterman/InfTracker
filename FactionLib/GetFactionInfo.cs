@@ -16,54 +16,51 @@ namespace FactionLib
         const string systemURL = "/systems?name="; 
 
         public async Task<List<FactionSystemInf>> GetFactionList(string factionName, IProgress<int> progress)
-        {
+        { 
             List<FactionSystemInf> lst = new List<FactionSystemInf>();
-            var jsonBase = new WebClient().DownloadString(baseURL + factionURL + Uri.EscapeDataString(factionName));
-            FactionLibFaction.Faction f = JsonConvert.DeserializeObject<FactionLibFaction.Faction>(jsonBase);
-            string factionLowercase = f.docs[0].name;
-            List<string> lstOfSys = new List<string>();
-            foreach(FactionPresence ff in f.docs[0].faction_presence)
+            var jsonBase = await new WebClient().DownloadStringTaskAsync(baseURL + factionURL + Uri.EscapeDataString(factionName));
+            FactionLibFaction.Faction mainFaction = JsonConvert.DeserializeObject<FactionLibFaction.Faction>(jsonBase);
+            string facName = mainFaction.docs[0].name;
+            foreach(FactionPresence systems in mainFaction.docs[0].faction_presence)
             {
-                lstOfSys.Add(ff.system_name);
                 FactionSystemInf fsi = new FactionSystemInf();
-                fsi.systemName = ff.system_name;
-                fsi.influence = ff.influence;
-                
+                fsi.systemName = systems.system_name;
+                fsi.influence = systems.influence;
                 lst.Add(fsi);
             }
 
-            List<FactionLibFaction.Faction> facCache = new List<Faction>();
+            List<FactionLibFaction.Faction> factionCache = new List<Faction>();
             int i = 0;
-            foreach(FactionSystemInf ff in lst)
+            foreach(FactionSystemInf factionToSearch in lst)
             {
                 //Grab all factions in said system
-                var jsonSys = await new WebClient().DownloadStringTaskAsync(baseURL + systemURL + Uri.EscapeDataString(ff.systemName));
+                var jsonSys = await new WebClient().DownloadStringTaskAsync(baseURL + systemURL + Uri.EscapeDataString(factionToSearch.systemName));
                 FactionLibSystem.System s = JsonConvert.DeserializeObject<FactionLibSystem.System>(jsonSys);
 
-                ff.LastUpdate = s.docs[0].updated_at;
+                factionToSearch.LastUpdate = s.docs[0].updated_at;
 
                 //Grab each faction and find influence and compare
                 foreach(FactionLibSystem.Faction fac in s.docs[0].factions)
                 {
-                    if (fac.name != factionLowercase)
+                    if (fac.name != facName)
                     {
                         //first look for cached data
-                        Faction ffffffffff = facCache.Find(p => p.docs[0].name == fac.name);
-                        if (ffffffffff != null)
+                        Faction searchedFaction = factionCache.Find(p => p.docs[0].name == fac.name);
+                        if (searchedFaction != null)
                         {
-                            foreach (FactionPresence IveRunOutOfVars in ffffffffff.docs[0].faction_presence)
+                            foreach (FactionPresence factionSearched in searchedFaction.docs[0].faction_presence)
                             {
-                                if (ff.systemName == IveRunOutOfVars.system_name)
+                                if (factionToSearch.systemName == factionSearched.system_name)
                                 {
-                                    if (IveRunOutOfVars.influence >= ff.influence && ((ff.factionAboveInf == 0) || (IveRunOutOfVars.influence < ff.factionAboveInf)))
+                                    if (factionSearched.influence >= factionToSearch.influence && ((factionToSearch.factionAboveInf == 0) || (factionSearched.influence < factionToSearch.factionAboveInf)))
                                     {
-                                        ff.factionAboveInf = IveRunOutOfVars.influence;
-                                        ff.factionAboveName = fac.name;
+                                        factionToSearch.factionAboveInf = factionSearched.influence;
+                                        factionToSearch.factionAboveName = fac.name;
                                     }
-                                    else if (IveRunOutOfVars.influence < ff.influence && ((ff.factionBelowInf == 0) || (IveRunOutOfVars.influence > ff.factionBelowInf)))
+                                    else if (factionSearched.influence < factionToSearch.influence && ((factionToSearch.factionBelowInf == 0) || (factionSearched.influence > factionToSearch.factionBelowInf)))
                                     {
-                                        ff.factionBelowInf = IveRunOutOfVars.influence;
-                                        ff.factionBelowName = fac.name;
+                                        factionToSearch.factionBelowInf = factionSearched.influence;
+                                        factionToSearch.factionBelowName = fac.name;
                                     }
 
                                 }
@@ -73,24 +70,24 @@ namespace FactionLib
                         {
                             var jsonFac = await new WebClient().DownloadStringTaskAsync(baseURL + factionURL + Uri.EscapeDataString(fac.name));
                             FactionLibFaction.Faction finf = JsonConvert.DeserializeObject<FactionLibFaction.Faction>(jsonFac);
-                            foreach (FactionPresence IveRunOutOfVars in finf.docs[0].faction_presence)
+                            foreach (FactionPresence factionSearched in finf.docs[0].faction_presence)
                             {
-                                if (ff.systemName == IveRunOutOfVars.system_name)
+                                if (factionToSearch.systemName == factionSearched.system_name)
                                 {
-                                    if (IveRunOutOfVars.influence >= ff.influence && ((ff.factionAboveInf == 0) || (IveRunOutOfVars.influence < ff.factionAboveInf)))
+                                    if (factionSearched.influence >= factionToSearch.influence && ((factionToSearch.factionAboveInf == 0) || (factionSearched.influence < factionToSearch.factionAboveInf)))
                                     {
-                                        ff.factionAboveInf = IveRunOutOfVars.influence;
-                                        ff.factionAboveName = fac.name;
+                                        factionToSearch.factionAboveInf = factionSearched.influence;
+                                        factionToSearch.factionAboveName = fac.name;
                                     }
-                                    else if (IveRunOutOfVars.influence < ff.influence && ((ff.factionBelowInf == 0) || (IveRunOutOfVars.influence > ff.factionBelowInf)))
+                                    else if (factionSearched.influence < factionToSearch.influence && ((factionToSearch.factionBelowInf == 0) || (factionSearched.influence > factionToSearch.factionBelowInf)))
                                     {
-                                        ff.factionBelowInf = IveRunOutOfVars.influence;
-                                        ff.factionBelowName = fac.name;
+                                        factionToSearch.factionBelowInf = factionSearched.influence;
+                                        factionToSearch.factionBelowName = fac.name;
                                     }
 
                                 }
                             }
-                            facCache.Add(finf);
+                            factionCache.Add(finf);
                         }
                     }
 
@@ -101,46 +98,45 @@ namespace FactionLib
                 progress.Report(i*100 / lst.Count());
             }
 
-            foreach (FactionSystemInf ff in lst)
+            int tickCutoff = 14;
+            DateTime dtCutoff;
+
+            if (DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc))
             {
-                ff.influence = ff.influence * 100.0000;
-                ff.factionBelowInf = ff.factionBelowInf * 100.0000;
-                ff.factionAboveInf = ff.factionAboveInf * 100.0000;
+                dtCutoff = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+            }
+            else
+            {
+                dtCutoff = new DateTime(DateTime.UtcNow.AddDays(-1).Year, DateTime.UtcNow.AddDays(-1).Month, DateTime.UtcNow.AddDays(-1).Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+            }
+
+            foreach (FactionSystemInf facSysInf in lst)
+            {
+                facSysInf.influence = facSysInf.influence * 100.0000;
+                facSysInf.factionBelowInf = facSysInf.factionBelowInf * 100.0000;
+                facSysInf.factionAboveInf = facSysInf.factionAboveInf * 100.0000;
 
                 if(
-                  ((ff.factionAboveInf > 0) && (ff.factionAboveInf- ff.influence <= 3))
+                  ((facSysInf.factionAboveInf > 0) && (facSysInf.factionAboveInf- facSysInf.influence <= 3))
                   ||
-                  ((ff.factionBelowInf > 0) && (ff.influence - ff.factionBelowInf <= 3))
+                  ((facSysInf.factionBelowInf > 0) && (facSysInf.influence - facSysInf.factionBelowInf <= 3))
                    )
                 {
-                    ff.TooClose = 1;
+                    facSysInf.TooClose = 1;
                 }
                 else if (
-                    ((ff.factionAboveInf > 0) && (ff.factionAboveInf - ff.influence <= 5))
+                    ((facSysInf.factionAboveInf > 0) && (facSysInf.factionAboveInf - facSysInf.influence <= 5))
                     ||
-                    ((ff.factionBelowInf > 0) && (ff.influence - ff.factionBelowInf <= 5))
+                    ((facSysInf.factionBelowInf > 0) && (facSysInf.influence - facSysInf.factionBelowInf <= 5))
                    )
                 {
-                    ff.TooClose = 2;
+                    facSysInf.TooClose = 2;
                 }
 
-                int tickCutoff = 14;
-                DateTime dt;
-
-                if (DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc))
+                if (facSysInf.LastUpdate < dtCutoff)
                 {
-                    dt = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+                    facSysInf.DataIsOld = true;
                 }
-                else
-                {
-                    dt = new DateTime(DateTime.UtcNow.AddDays(-1).Year, DateTime.UtcNow.AddDays(-1).Month, DateTime.UtcNow.AddDays(-1).Day, tickCutoff, 0, 0, DateTimeKind.Utc);
-                }
-
-                if(ff.LastUpdate < dt)
-                {
-                    ff.DataIsOld = true;
-                }
-
 
             }
             lst = lst.OrderBy(p => p.systemName).ToList();
