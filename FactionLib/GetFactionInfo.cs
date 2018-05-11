@@ -29,18 +29,30 @@ namespace FactionLib
                 lst.Add(fsi);
             }
 
+            int tickCutoff = 14;
+            DateTime dtCutoff;
+
+            if (DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc))
+            {
+                dtCutoff = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+            }
+            else
+            {
+                dtCutoff = new DateTime(DateTime.UtcNow.AddDays(-1).Year, DateTime.UtcNow.AddDays(-1).Month, DateTime.UtcNow.AddDays(-1).Day, tickCutoff, 0, 0, DateTimeKind.Utc);
+            }
+
             List<FactionLibFaction.Faction> factionCache = new List<Faction>();
             int i = 0;
-            foreach(FactionSystemInf factionToSearch in lst)
+            foreach(FactionSystemInf systemToSearch in lst)
             {
                 //Grab all factions in said system
-                var jsonSys = await new WebClient().DownloadStringTaskAsync(baseURL + systemURL + Uri.EscapeDataString(factionToSearch.systemName));
-                FactionLibSystem.System s = JsonConvert.DeserializeObject<FactionLibSystem.System>(jsonSys);
+                var jsonSys = await new WebClient().DownloadStringTaskAsync(baseURL + systemURL + Uri.EscapeDataString(systemToSearch.systemName));
+                FactionLibSystem.System sys = JsonConvert.DeserializeObject<FactionLibSystem.System>(jsonSys);
 
-                factionToSearch.LastUpdate = s.docs[0].updated_at;
+                systemToSearch.LastUpdate = sys.docs[0].updated_at;
 
                 //Grab each faction and find influence and compare
-                foreach(FactionLibSystem.Faction fac in s.docs[0].factions)
+                foreach(FactionLibSystem.Faction fac in sys.docs[0].factions)
                 {
                     if (fac.name != facName)
                     {
@@ -50,19 +62,18 @@ namespace FactionLib
                         {
                             foreach (FactionPresence factionSearched in searchedFaction.docs[0].faction_presence)
                             {
-                                if (factionToSearch.systemName == factionSearched.system_name)
+                                if (systemToSearch.systemName == factionSearched.system_name)
                                 {
-                                    if (factionSearched.influence >= factionToSearch.influence && ((factionToSearch.factionAboveInf == 0) || (factionSearched.influence < factionToSearch.factionAboveInf)))
+                                    if (factionSearched.influence >= systemToSearch.influence && ((systemToSearch.factionAboveInf == 0) || (factionSearched.influence < systemToSearch.factionAboveInf)))
                                     {
-                                        factionToSearch.factionAboveInf = factionSearched.influence;
-                                        factionToSearch.factionAboveName = fac.name;
+                                        systemToSearch.factionAboveInf = factionSearched.influence;
+                                        systemToSearch.factionAboveName = fac.name;
                                     }
-                                    else if (factionSearched.influence < factionToSearch.influence && ((factionToSearch.factionBelowInf == 0) || (factionSearched.influence > factionToSearch.factionBelowInf)))
+                                    else if (factionSearched.influence < systemToSearch.influence && ((systemToSearch.factionBelowInf == 0) || (factionSearched.influence > systemToSearch.factionBelowInf)))
                                     {
-                                        factionToSearch.factionBelowInf = factionSearched.influence;
-                                        factionToSearch.factionBelowName = fac.name;
+                                        systemToSearch.factionBelowInf = factionSearched.influence;
+                                        systemToSearch.factionBelowName = fac.name;
                                     }
-
                                 }
                             }
                         }
@@ -72,19 +83,18 @@ namespace FactionLib
                             FactionLibFaction.Faction finf = JsonConvert.DeserializeObject<FactionLibFaction.Faction>(jsonFac);
                             foreach (FactionPresence factionSearched in finf.docs[0].faction_presence)
                             {
-                                if (factionToSearch.systemName == factionSearched.system_name)
+                                if (systemToSearch.systemName == factionSearched.system_name)
                                 {
-                                    if (factionSearched.influence >= factionToSearch.influence && ((factionToSearch.factionAboveInf == 0) || (factionSearched.influence < factionToSearch.factionAboveInf)))
+                                    if (factionSearched.influence >= systemToSearch.influence && ((systemToSearch.factionAboveInf == 0) || (factionSearched.influence < systemToSearch.factionAboveInf)))
                                     {
-                                        factionToSearch.factionAboveInf = factionSearched.influence;
-                                        factionToSearch.factionAboveName = fac.name;
+                                        systemToSearch.factionAboveInf = factionSearched.influence;
+                                        systemToSearch.factionAboveName = fac.name;
                                     }
-                                    else if (factionSearched.influence < factionToSearch.influence && ((factionToSearch.factionBelowInf == 0) || (factionSearched.influence > factionToSearch.factionBelowInf)))
+                                    else if (factionSearched.influence < systemToSearch.influence && ((systemToSearch.factionBelowInf == 0) || (factionSearched.influence > systemToSearch.factionBelowInf)))
                                     {
-                                        factionToSearch.factionBelowInf = factionSearched.influence;
-                                        factionToSearch.factionBelowName = fac.name;
+                                        systemToSearch.factionBelowInf = factionSearched.influence;
+                                        systemToSearch.factionBelowName = fac.name;
                                     }
-
                                 }
                             }
                             factionCache.Add(finf);
@@ -96,18 +106,6 @@ namespace FactionLib
 
                 //update progress
                 progress.Report(i*100 / lst.Count());
-            }
-
-            int tickCutoff = 14;
-            DateTime dtCutoff;
-
-            if (DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc))
-            {
-                dtCutoff = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, tickCutoff, 0, 0, DateTimeKind.Utc);
-            }
-            else
-            {
-                dtCutoff = new DateTime(DateTime.UtcNow.AddDays(-1).Year, DateTime.UtcNow.AddDays(-1).Month, DateTime.UtcNow.AddDays(-1).Day, tickCutoff, 0, 0, DateTimeKind.Utc);
             }
 
             foreach (FactionSystemInf facSysInf in lst)
